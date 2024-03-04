@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+
+        form {
+            max-width: 400px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #registrosAnteriores {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #listaRegistros {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+        }
+
+        #listaRegistros li {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        #otraCarrera {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Formulario de Registro</h2>
+
+    <form id="registroForm">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="telefono">Teléfono:</label>
+        <input type="tel" id="telefono" name="telefono" required>
+
+        <label for="email">Correo Electrónico:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="escuela">Escuela:</label>
+        <select id="escuela" name="escuela" onchange="mostrarOpciones()">
+            <option value="cecytem">Cecytem</option>
+            <option value="conalep">Conalep</option>
+            <option value="cetmar">Cetmar</option>
+            <option value="otra">Otra escuela</option>
+        </select>
+
+        <div id="otraEscuela" style="display: none;">
+            <label for="nombreEscuela">Nombre de la Escuela:</label>
+            <input type="text" id="nombreEscuela" name="nombreEscuela">
+
+            <label for="nombreCarrera">Nombre de la Carrera:</label>
+            <input type="text" id="nombreCarrera" name="nombreCarrera">
+        </div>
+
+        <div id="opcionesCarrera" style="display: none;">
+            <label for="carrera">Carrera:</label>
+            <select id="carrera" name="carrera" onchange="mostrarOtraCarrera()">
+                <option value="carreraA">Carrera A</option>
+                <option value="carreraB">Carrera B</option>
+                <option value="carreraC">Carrera C</option>
+                <option value="otraCarrera">Otra carrera</option>
+            </select>
+
+            <div id="otraCarrera">
+                <label for="nombreOtraCarrera">Nombre de la Otra Carrera:</label>
+                <input type="text" id="nombreOtraCarrera" name="nombreOtraCarrera">
+            </div>
+        </div>
+
+        <button type="button" onclick="registrar()">Registrar</button>
+    </form>
+
+    <div id="registrosAnteriores">
+        <h3>Registros Anteriores:</h3>
+        <ul id="listaRegistros"></ul>
+    </div>
+
+    <script>
+        var contadorRegistros = 0;
+
+        function mostrarOpciones() {
+            var escuelaSeleccionada = document.getElementById("escuela").value;
+            var otraEscuelaDiv = document.getElementById("otraEscuela");
+            var opcionesCarreraDiv = document.getElementById("opcionesCarrera");
+
+            // Mostrar u ocultar secciones según la opción seleccionada
+            otraEscuelaDiv.style.display = escuelaSeleccionada === "otra" ? "block" : "none";
+            opcionesCarreraDiv.style.display = escuelaSeleccionada !== "otra" ? "block" : "none";
+
+            // Reiniciar selecciones de carrera y ocultar la sección de otra carrera
+            document.getElementById("carrera").selectedIndex = 0;
+            document.getElementById("otraCarrera").style.display = "none";
+        }
+
+        function mostrarOtraCarrera() {
+            var carreraSeleccionada = document.getElementById("carrera").value;
+            document.getElementById("otraCarrera").style.display = (carreraSeleccionada === "otraCarrera") ? "block" : "none";
+        }
+
+        function registrar() {
+            contadorRegistros++;
+
+            var nombre = document.getElementById("nombre").value;
+            var telefono = document.getElementById("telefono").value;
+            var email = document.getElementById("email").value;
+            var escuela = document.getElementById("escuela").value;
+            var nombreEscuela = document.getElementById("nombreEscuela").value;
+            var nombreCarrera = document.getElementById("nombreCarrera").value;
+            var carrera = document.getElementById("carrera").value;
+            var nombreOtraCarrera = document.getElementById("nombreOtraCarrera").value;
+
+            var registro = {
+                Numero: contadorRegistros,
+                Nombre: nombre,
+                Telefono: telefono,
+                "Correo Electrónico": email,
+                Escuela: escuela === "otra" ? nombreEscuela : escuela,
+                Carrera: escuela === "otra" ? nombreCarrera : (carrera === "otraCarrera" ? nombreOtraCarrera : carrera)
+            };
+
+            var listaRegistros = document.getElementById("listaRegistros");
+            var nuevoElemento = document.createElement("li");
+            nuevoElemento.textContent = "Datos #" + contadorRegistros + ":\nNombre: " + registro.Nombre + "\nTeléfono: " + registro.Telefono + "\nCorreo Electrónico: " + registro["Correo Electrónico"] + "\nEscuela: " + registro.Escuela + "\nCarrera: " + registro.Carrera;
+            listaRegistros.appendChild(nuevoElemento);
+
+            // Mostrar la sección de registros anteriores después del primer registro
+            document.getElementById("registrosAnteriores").style.display = "block";
+
+            // Limpiar el formulario después del registro
+            document.getElementById("registroForm").reset();
+            document.getElementById("otraEscuela").style.display = "none";
+            document.getElementById("opcionesCarrera").style.display = "none";
+            document.getElementById("carrera").selectedIndex = 0;
+            document.getElementById("otraCarrera").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>
